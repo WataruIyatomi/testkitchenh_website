@@ -222,5 +222,68 @@ cards.forEach(card => {
     card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     cardObserver.observe(card);
 });
+// ===== microCMS 設定（ここだけ自分の値に変更）=====
+const MICROCMS_SERVICE_DOMAIN = "ここにserviceDomain";
+const MICROCMS_API_KEY = "ここにAPIキー";
+const ENDPOINT = "news"; // 作ったエンドポイント
+
+// ===== お知らせ取得 =====
+async function fetchNews() {
+  const url = `https://${MICROCMS_SERVICE_DOMAIN}.microcms.io/api/v1/${ENDPOINT}?limit=5`;
+
+  const res = await fetch(url, {
+    headers: {
+      "X-MICROCMS-API-KEY": MICROCMS_API_KEY,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`microCMS API error: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+// ===== HTMLに表示 =====
+function renderNews(contents) {
+  const container = document.getElementById("news-list");
+  if (!container) return;
+
+  if (!contents || contents.length === 0) {
+    container.innerHTML = "<p>お知らせはありません。</p>";
+    return;
+  }
+
+  const html = contents
+    .map((item) => {
+      const date = item.date ? new Date(item.date).toLocaleDateString("ja-JP") : "";
+      const title = item.title ?? "(no title)";
+      const body = item.body ?? "";
+
+      return `
+        <article style="border-bottom: 1px solid #ddd; padding: 12px 0;">
+          <div style="font-size: 14px; color: #666;">${date}</div>
+          <div style="font-size: 18px; font-weight: 700; margin: 6px 0;">${title}</div>
+          <div style="line-height: 1.7;">${body}</div>
+        </article>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = html;
+}
+
+// ===== 実行 =====
+(async () => {
+  try {
+    const data = await fetchNews();
+    renderNews(data.contents);
+  } catch (err) {
+    console.error(err);
+    const container = document.getElementById("news-list");
+    if (container) container.innerHTML = "<p>お知らせの読み込みに失敗しました。</p>";
+  }
+})();
+
 
 console.log('TEST KITCHEN H - Website Loaded Successfully ✨');

@@ -223,8 +223,8 @@ cards.forEach(card => {
     cardObserver.observe(card);
 });
 // ===== microCMS 設定（ここだけ自分の値に変更）=====
-const MICROCMS_SERVICE_DOMAIN = "ここにserviceDomain";
-const MICROCMS_API_KEY = "ここにAPIキー";
+const MICROCMS_SERVICE_DOMAIN = "testkitchenh";
+const MICROCMS_API_KEY = "SwGhVyiu249eg4vcbtaBy5KmAKaeDBRmt53F";
 const ENDPOINT = "news"; // 作ったエンドポイント
 
 // ===== お知らせ取得 =====
